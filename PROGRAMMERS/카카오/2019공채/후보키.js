@@ -1,65 +1,44 @@
+const MAX_STRLEN = 8;
+
+const padString = (str, len) => {
+  return Array.from({ length: len - str.length + 1 }).join("0") + str;
+};
+
 function solution(relation) {
   const columns = relation[0].length;
   const rows = relation.length;
-  const rset = new Set();
 
   const validate = (list) => {
     const rset = new Set();
     const len = list.length;
-
-    if (!len) return false;
     for (let i = 0; i < rows; i++) {
-      const str = list.reduce((acc, cur) => {
-        let s = relation[i][cur];
-
-        return (
-          acc +
-          s +
-          Array.from({ length: 8 - s.length })
-            .map(() => "")
-            .join("0")
-        );
-      }, "");
-
-      if (rset.has(str)) return false;
-
-      rset.add(str);
+      let temp = "";
+      for (let j = 0; j < len; j++) {
+        if (list[j] === "1") temp += padString(relation[i][j], MAX_STRLEN);
+      }
+      if (rset.has(temp)) return false;
+      rset.add(temp);
     }
-
     return true;
   };
 
-  const idxList = Array.from({ length: columns }).map((_, i) => i);
-  const numSet = new Set();
-
-  const dfs = (list, rest) => {
-    numSet.add(list.sort((a, b) => a - b).join(""));
-
-    rest.forEach((l, i) => {
-      const temp = rest.slice();
-      temp.splice(i, 1);
-      dfs(list.concat([l]), temp);
-    });
-  };
-
-  dfs([], idxList);
-
   const resultList = [];
 
-  Array.from(numSet).forEach((l) => {
-    const temp = l.split("");
+  const list = Array.from({ length: Math.pow(2, columns) - 1 }).map((_, i) => {
+    const str = padString(parseInt(i + 1).toString(2), columns);
 
-    if (validate(temp)) {
+    if (validate(str)) {
       let go = true;
       resultList.some((r) => {
-        if (l.indexOf(r) >= 0 || r.indexOf(l) >= 0) {
+        const a = parseInt(r, 2);
+        const b = parseInt(str, 2);
+        const c = a | b;
+        if (a === c || b === c) {
           go = false;
           return true;
         }
       });
-      if (go) {
-        resultList.push(l);
-      }
+      if (go) resultList.push(str);
     }
   });
 
