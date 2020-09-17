@@ -1,8 +1,8 @@
 # algorithm
 알고리즘 문제해결
 
-## CodeForce
+### CodeForces
 https://codeforces.com/
 
-## Programmers
+### Programmers
 https://programmers.co.kr/
